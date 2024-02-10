@@ -9,16 +9,40 @@ import SwiftUI
 
 struct ConversationsView: View {
     @State var isShowingNewMessageView = false
+    @State var showChat: Bool = false
+    @State var user: User?
+    @ObservedObject var viewModel = ConversationViewModel()
+    
     var body: some View {
         ZStack (alignment: .bottomTrailing){
+            
+            if let user = user{
+                NavigationLink(destination: LazyView(ChatView(user: user)),
+                               isActive: $showChat,
+                               label: {} )
+                
+            }
+
+            
             ScrollView{
-                VStack{
-                    ForEach(0..<10){ _ in
-                        NavigationLink {
-                            Text("Destination")
+                VStack(alignment: .leading){
+                    ForEach(viewModel.recentMessages){ message in
+                        
+                        Button {
+                            showChat.toggle()
                         } label: {
-                            ConversationsCell().frame(alignment: .leading)
+                            ConversationsCell(message: message)
+                                .frame(alignment: .leading)
                         }
+
+                        
+//                        NavigationLink {
+//                            LazyView(ChatView(user: message.user))
+//                        } label: {
+//                            ConversationsCell(message: message)
+//                                .frame(alignment: .leading)
+//
+//                        }
                         
                     }
                 }
@@ -27,6 +51,7 @@ struct ConversationsView: View {
             
             Button {
                 self.isShowingNewMessageView.toggle()
+                print("DEBUG: show chat is \(showChat)")
             } label: {
                 Image(systemName: "envelope")
                     .resizable()
@@ -39,13 +64,12 @@ struct ConversationsView: View {
             .clipShape(Circle())
             .padding()
             .sheet(isPresented: $isShowingNewMessageView) {
-                print("DEBUG: thing was dismissed")
-                //it works thats mad
+                                
+                    showChat.toggle()
+
             } content: {
-                SearchView()
+                NewMessageView(showingNewMessageView: $isShowingNewMessageView, startChat: $showChat, user: $user)
             }
-
-
         }
     }
 }

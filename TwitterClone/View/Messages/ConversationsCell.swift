@@ -6,13 +6,16 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct ConversationsCell: View {
+    let message: Message
+    
     var body: some View {
         
         VStack (alignment: .leading){
             HStack (spacing: 12){
-                Image("batman")
+                KFImage(URL(string: message.user.profileImageUrl))
                     .resizable()
                     .scaledToFill()
                     .frame(width: 56, height: 56)
@@ -20,12 +23,16 @@ struct ConversationsCell: View {
                     .clipped()
                 
                 VStack (alignment: .leading, spacing: 4){
-                    Text("insert user name")
+                    Text(message.user.fullname)
                         .font(.system(size: 14, weight: .semibold))
                     
-                    Text("last sent message this does and i guess so me ti mes it looks funny")
+                    Text(message.text)
                         .font(.system(size: 14))
                         .lineLimit(2)
+                        .frame(alignment: .leading)
+                        .multilineTextAlignment(.leading)
+                        .foregroundColor(.gray)
+                    
                 }
                 .foregroundColor(.black)
                 .frame(height: 64)
@@ -39,8 +46,3 @@ struct ConversationsCell: View {
     }
 }
 
-struct ConversationsCell_Previews: PreviewProvider {
-    static var previews: some View {
-        ConversationsCell()
-    }
-}
